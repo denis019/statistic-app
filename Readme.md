@@ -6,9 +6,10 @@
 2. ```cd statistic-app```
 3. ```cp .env.example .env```
 4. update .env with AUTH_CLIENT_ID
-5. ```cd docker```
-6. ```./build.sh```
-7. ```./run.sh```
+5. ```cp ./docker/.env.example ./docker/.env```
+6. ```cd docker```
+7. ```./build.sh```
+8. ```./run.sh```
 
 ## Used technologies
 - php8.0
