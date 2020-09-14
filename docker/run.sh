@@ -1,0 +1,1 @@
+docker exec social_network_statistic-php_fpm php bootstrap/bootstrap.php
