@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SocialNetwork\Infrastructure\SlToken;
 
-use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SlToken implements SlTokenInterface
@@ -25,21 +24,17 @@ class SlToken implements SlTokenInterface
             return $this->token;
         }
 
-        try {
-            $response = $this->httpClient->request('POST', (string)$this->auth->getUrl(), [
-                'json' => [
-                    'client_id' => $this->auth->getClientId(),
-                    'email' => (string)$this->auth->getEmail(),
-                    'name' => $this->auth->getName(),
-                ],
-            ]);
+        $response = $this->httpClient->request('POST', (string)$this->auth->getUrl(), [
+            'json' => [
+                'client_id' => $this->auth->getClientId(),
+                'email' => (string)$this->auth->getEmail(),
+                'name' => $this->auth->getName(),
+            ],
+        ]);
 
-            $decodedPayload = $response->toArray();
+        $decodedPayload = $response->toArray();
 
-            $this->token = $decodedPayload['data']['sl_token'] ?? '';
-        } catch (ClientExceptionInterface $e) {
-
-        }
+        $this->token = $decodedPayload['data']['sl_token'] ?? '';
 
         return $this->token;
     }
