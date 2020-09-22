@@ -11,7 +11,7 @@
 7. ```./bin/run.sh```
 
 ## Used technologies
-- php8.0
+- php 8.0
 - xdebug 3
 - composer 2
 - docker
