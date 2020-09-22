@@ -10,7 +10,8 @@ use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 // Start the clock time in seconds
 $start_time = microtime(true);
 
-(new Dotenv(false))->loadEnv(__DIR__ . '/../.env');
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__ . '/../.env');
 
 try {
     $container = new ContainerBuilder();

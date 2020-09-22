@@ -1,12 +1,4 @@
-FROM php:8.0.0beta3-fpm
-
-# always run apt update when start and after add new source list, then clean up at end.
-#RUN set -xe; \
-#    curl \
-#    apt-get update -yqq && \
-#    apt-get install -yqq \
-#    apt-utils \
-#    libzip-dev zip unzip
+FROM php:8.0-rc-fpm
 
 RUN set -eux; \
     apt-get update; \
@@ -15,6 +7,7 @@ RUN set -eux; \
             curl \
             libzip-dev \
             zip \
+            git \
             unzip; \
     rm -rf /var/lib/apt/lists/*
 
@@ -23,9 +16,7 @@ RUN set -eux; \
 #####################################
 
 # Install composer and add its bin to the PATH.
-RUN curl -s http://getcomposer.org/installer | php && \
-    echo "export PATH=${PATH}:/var/www/vendor/bin" >> ~/.bashrc && \
-    mv composer.phar /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version=2.0.0-RC1
 
 ###########################################################################
 # xDebug:
@@ -33,26 +24,18 @@ RUN curl -s http://getcomposer.org/installer | php && \
 
 ARG INSTALL_XDEBUG=false
 
-RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-  # Install the xdebug extension
-  if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-    pecl install xdebug-2.5.5; \
-  else \
-    if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
-      pecl install xdebug-2.9.0; \
-    else \
-      pecl install xdebug; \
-    fi \
-  fi && \
-  docker-php-ext-enable xdebug \
-;fi
-
+RUN mkdir -p /opt/php-libs
 # Copy xdebug configuration for remote debugging
-COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-
-RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /usr/local/etc/php/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /usr/local/etc/php/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /usr/local/etc/php/conf.d/xdebug.ini
+COPY ./xdebug.ini /opt/php-libs
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    cd /opt/php-libs \
+    && git clone https://github.com/xdebug/xdebug \
+    && cd xdebug \
+    && phpize \
+    && ./configure \
+    && make all \
+    && cp /opt/php-libs/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini \
+;fi
 
 # Clean up
 RUN apt-get clean && \
