@@ -7,12 +7,13 @@
 3. ```cp .env.example .env```
 4. update .env with AUTH_CLIENT_ID
 5. ```cp ./docker/.env.example ./docker/.env```
-6. ```cd docker```
-7. ```./build.sh```
-8. ```./run.sh```
+6. ```./bin/build.sh```
+7. ```./bin/run.sh```
 
 ## Used technologies
 - php8.0
+- xdebug 3
+- composer 2
 - docker
 
 ## Used libraries

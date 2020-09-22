@@ -11,4 +11,4 @@ docker-compose up --build -d
 docker exec social_network_statistic-php_fpm composer install
 
 echo "${green}App is ready!${reset}"
-echo "${green}Run: run.sh${reset}"
+echo "${green}Run: ./bin/run.sh${reset}"
